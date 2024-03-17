@@ -1,4 +1,12 @@
 <?php 
+    // function condb (){
+    //     $serv="localhost";
+    //     $usr="root";
+    //     $pss="Fer_final2023";
+    //     $bd="finalAlgoritmos2_FernandoLemos";
+    //     $c=mysqli_connect($serv, $usr, $pss, $bd);
+    //     return $c;
+    // }
     function condb (){
         $serv="localhost";
         $usr="root";
@@ -16,19 +24,19 @@
         private $nombre;
         private $apellido;
         private $rol; // 1 para administrador 2 para profesor 3 para alumno
-        private $contraseña;
+        private $contrasenia;
         private $email;
         private $dni;
         private $estado; // 1 activo 2 suspendido
     #endregion
 
     #region constructor
-        public function __construct($id,$nombre,$apellido,$rol,$contraseña,$email,$dni,$estado){
+        public function __construct($id,$nombre,$apellido,$rol,$contrasenia,$email,$dni,$estado){
             $this->id = $id;
             $this->nombre = $nombre;
             $this->apellido = $apellido;
             $this->rol = $rol;
-            $this->contraseña = $contraseña;
+            $this->contrasenia = $contrasenia;
             $this->email = $email;
             $this->dni = $dni;
             $this->estado = $estado;
@@ -40,7 +48,7 @@
             $con = condb();
             $text = "";
 
-            mysqli_query($con,"insert into usuarios (nombre,apellido,rol,contraseña,email,dni,idEstado) values ('$this->nombre','$this->apellido',$this->rol,'$this->contraseña','$this->email',$this->dni,$this->estado);");
+            mysqli_query($con,"insert into usuarios (nombre,apellido,rol,contrasenia,email,dni,idEstado) values ('$this->nombre','$this->apellido',$this->rol,'$this->contrasenia','$this->email',$this->dni,$this->estado);");
 
             (mysqli_affected_rows($con) > 0) ? $text = "Nuevo usuario agregado al sistema" : $text =" No se pudo generar un nuevo usuario";
 
@@ -53,7 +61,7 @@
             $con = condb();
             $texto = "";
 
-            mysqli_query($con,"update usuarios set nombre = '$this->nombre', apellido = '$this->apellido' , rol = '$this->rol', contraseña = '$this->contraseña', email = '$this->email', dni = $this->dni , idEstado = $this->estado where id = $this->id;");
+            mysqli_query($con,"update usuarios set nombre = '$this->nombre', apellido = '$this->apellido' , rol = '$this->rol', contrasenia = '$this->contrasenia', email = '$this->email', dni = $this->dni , idEstado = $this->estado where id = $this->id;");
 
             (mysqli_affected_rows($con) > 0) ? $texto = 'Usuario modificado correctamente' : $texto = 'No se pudo modificar al usuario correctamente';
 
@@ -75,15 +83,42 @@
     #endregion
 
     #region VerificarUsuario
-        public static function VerificarUsuario($dni,$contraseña){
+        // $usu = mysqli_query($con, "select dni from usuarios where dni = $dni");
+        // $contra = mysqli_query($con, "select contrasenia from usuarios where dni = $dni");
+
+        // if (mysqli_num_rows($usu) > 0 && mysqli_num_rows($contra) > 0) {
+        //     $contra = mysqli_fetch_assoc($contra);
+        //     if ($contra['contrasenia'] === $contrasenia) {
+        //         // The user's credentials are valid
+        //     } else {
+        //         // The user's password is invalid
+        //     }
+        // } else {
+        //     // The user's DNI is invalid
+        // }
+        // Inicio de sesión, triple consulta innecesaria en VerificarUsuario()!
+        public static function VerificarUsuario($dni,$contrasenia){
             $con = condb();
             
-            if ($dni != "" && $contraseña != ""){
+            if ($dni != "" && $contrasenia != ""){
                 $usu = mysqli_query($con , "select dni from usuarios where dni = $dni");
+                // $userData = mysqli_query($con, "select * from usuarios where dni = '$dni' and contrasenia = '$contrasenia';");
                 if(mysqli_affected_rows($con)>0){
-                    $contra = mysqli_query($con, " select contraseña from usuarios where dni = $dni");
+                    // if($userData['contrasenia'] === $contrasenia){
+                    //     $userData = mysqli_fetch_assoc($userData);
+                    //     session_start();
+                    //     $_SESSION['id'] = $userData['id'];
+                    //     $_SESSION['nombre'] = $userData['nombre'];
+                    //     $_SESSION['apellido'] = $userData['apellido'];
+                    //     $_SESSION['rol'] = $userData['rol'];
+                    //     $_SESSION['email'] = $userData['email'];
+                    //     $_SESSION['dni'] = $dni;
+                    //     $_SESSION['idEstado'] = $userData['idEstado'];
+                    //     header("location:vista.php");
+                    // }
+                    $contra = mysqli_query($con, " select contrasenia from usuarios where dni = $dni");
                     $contra = mysqli_fetch_assoc($contra);
-                    if($contra['contraseña'] == $contraseña){
+                    if($contra['contrasenia'] === $contrasenia){
                         $data = mysqli_query($con,"select * from usuarios where dni = '$dni' ");
                         $info = mysqli_fetch_assoc($data);
                         session_start();
@@ -95,7 +130,9 @@
                         $_SESSION['dni'] = $dni;
                         $_SESSION['idEstado'] = $info['idEstado'];
                         header("location:vista.php");
-                        // echo "<srcipt> window.location.href='fernandoLemosFinal/vista.php';</script>";
+                        //echo "<script> window.location.href='vista.php';</script>";
+
+                        
                     }else{
                         echo "Contraseña invalida";
                     }
@@ -116,20 +153,37 @@
         }
     #endregion
 
+    #region buscarRolEstado
+    public static function buscarRolEstado($rol,$estado){
+        $con = condb();
+        
+        $data = mysqli_query($con, "select * from usuarios where rol = $rol and estado = $estado;");
+
+        return $data;
+    }
+    #endregion
+
     #region listarUsuarios
+        // Admin: No deberia mostrarme las contraseñas de los usuarios! 
+        // Si quiero cambiarla puedo usar input type password.
         public static function listarUsuarios(){
             $con = condb();
 
-            $data = mysqli_query($con,"select usuarios.id, usuarios.nombre, usuarios.apellido, roles.nombreRol, usuarios.contraseña, usuarios.email, usuarios.dni, estados.nombreEstado from usuarios inner join roles on usuarios.rol = roles.id inner join estados on usuarios.idEstado = estados.id order by id;");
+            $data = mysqli_query($con,"select usuarios.id, usuarios.nombre, usuarios.apellido, roles.nombreRol, usuarios.contrasenia, usuarios.email, usuarios.dni, estados.nombreEstado from usuarios inner join roles on usuarios.rol = roles.id inner join estados on usuarios.idEstado = estados.id order by id;");
             
-            while ($info = mysqli_fetch_assoc($data)){ ?>
+            while ($info = mysqli_fetch_assoc($data)){ 
+                // contraseña cifrada bien, ver si se puede corregir para que se vean solo puntos
+                $contrasenia = $info['contrasenia'];
+                $contrasenia_cifrada = str_repeat("*", strlen($contrasenia));
+                // $contrasenia_cifrada = password_hash($contrasenia, PASSWORD_DEFAULT);
+                // $contrasenia_con_puntos = str_repeat("*", strlen($contrasenia_cifrada));?>
                 <tr>
                     <td><?php echo $info['id']; ?></td>
                     <td><?php echo $info['nombre']; ?></td>
                     <td><?php echo $info['apellido']; ?></td>
                     <td><?php echo $info['dni']; ?></td>
                     <td><?php echo $info['email']; ?></td>
-                    <td><?php echo $info['contraseña']; ?></td>
+                    <td><?php echo $contrasenia_cifrada; ?></td>
                     <td><?php echo $info['nombreRol']; ?></td>
                     <td><?php echo $info['nombreEstado']; ?></td>
                     <td>
@@ -143,7 +197,7 @@
                         </p>
                     </td>
                 </tr>
-    <?php   }
+        <?php   }
         }
     #endregion
 
@@ -184,7 +238,7 @@
                             
                         </select>
                     </label>
-                    <label for="contraseña">CONTRASEÑA<input type="text" class="inputVista" name="contraseña" id="contraseña" value="<?php echo $info['contraseña']; ?>"></label>
+                    <label for="contrasenia">CONTRASEÑA<input type="password" class="inputVista" name="contrasenia" id="contrasenia" value="<?php echo $info['contrasenia']; ?>"></label>
                     <label for="email">EMAIL<input type="text" class="inputVista" name="email" onkeyup="this.value = this.value();" id="email" value="<?php echo $info['email']; ?>"></label>
                     <label for="dni">DNI<input type="text" class="inputVista medio" name="dni" id="dni" value="<?php echo $info['dni']; ?>"></label>
                     <label for="estado">ESTADO

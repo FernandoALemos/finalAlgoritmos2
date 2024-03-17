@@ -41,13 +41,13 @@
             <p>- Puede haber una o más materias (plus si tengo ABM materias).</p> 
             <p>- Usuario profesor (ABM notas) y administrador (ABM alumnos, materias)</p> 
             <p>- Pueden usar POO o programación estructurada, lo que les resulte más cómodo.</p>
-            <p class="titulos">Ingreso al sistema como admin ó profesor <br>Usuario: 9999 Contraseña: admin123 <br>Usuario: 26456127 Contraseña: eboirek</p>
+            <p class="titulos">Ingreso al sistema como admin ó profesor <br>Usuario-Admin: 9999 Contraseña: admin123 <br>Usuario-Prof: 28102975 Contraseña: pgiaimo</p>
         </section>
         </div>
     </main>
     <footer>
         <font-size="5"><h4><p class="titulos blanco" ><font-size="5">Pasaje Crámer 471 – Bernal – Buenos Aires.</p><br>
-        <p class="titulos blanco">Contactanos Tel: 4444-1234, Email: instituofalso@gmail.com</p></h4></font-size>
+        <p class="titulos blanco">Contactanos Tel: 4444-1234, Email: institofalso@gmail.com</p></h4></font-size>
     </footer>
 </body>
 

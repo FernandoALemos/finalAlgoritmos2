@@ -1,4 +1,4 @@
-<?php 
+<?php
     require_once "carrerasClase.php";
     require_once "materiasClase.php";
     require_once "notasClase.php";
@@ -6,13 +6,24 @@
 
     session_start();
 
-    if(!isset($_SESSION['rol']) || $_SESSION['estado'] === '0'){
+    if(!isset($_SESSION['rol']) || $_SESSION['idEstado'] === '0'){
         die("No tenes credenciales para ingresar a este sitio. Intenta <a href='index.php'> registrate</a>.");
     }
 
     $idSESION = $_SESSION['id'];
-    
+    // Inicio de sesión, triple consulta innecesaria en VerificarUsuario()!
 
+    // Admin: No deberia mostrarme las contraseñas de los usuarios!! Si quiero cambiarla puedo usar input type password. (HECHO) CHECK
+    // Los campos para altas deberian ser obligatorios (al menos los necesarios) (HECHO) CHECK
+    // campo email deberia validar y no dejar ingresar cualquier cosa. (Verifica que no se duplique un mail) (HECHO)
+    // Si intento eliminar alumno asignado me da error fatal (YA POSEE UN MENSAJE PARA ELIMINAR UN ALUMNO O SUSPENDERLO, IDEM PARA PROFESOR)
+    // Eliminar solamente la materia asignada al alumno y no todas las que tiene asignadas (VERIFICAR, HECHO EN notasClase LINEA 122)
+    // FILTRAR POR USUARIOS ACTIVOS CUANDO QUIERO AGREGAR
+    // Profe: No cumple consigna! Me permite cargar final cuando no tiene los parciales aprobados!! (HECHO) CHECK
+    // Si intento modificar las notas del parcial uno aparece error fatal. (CHECK)
+    // Si no funciona dejar en blanco notas, deben ser campos obligatorios.
+
+    // CORREGIR PARA FEBRERO
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +46,7 @@
                 <nav class="header_div-nav">
                     <div class="header_div-nav-box">
                         <a href="vista.php" class="header_div_nav-item">Inicio</a>
-                        <?php 
+                        <?php
                             switch($_SESSION['rol']){
                                 case 1: // admin?>
                                     <a href="#Usuarios" class="header_div_nav-item">Usuarios</a>
@@ -61,11 +72,11 @@
     </header>
     <main class="Vista">
 
-        <?php 
+        <?php
         switch($_SESSION['rol']){
             case 1: // admin
 
-                #region Usuarios 
+                #region Usuarios
                 ?>
                 <section id="Usuarios" class="divUsuarios">
                     <div class="divUsuarios-cabecera">
@@ -93,7 +104,7 @@
                     </tbody>
                     </table>
                 </section>
-                <?php 
+                <?php
                 #endregion
 
                 #region Carreras
@@ -120,15 +131,15 @@
                     </tbody>
                     </table>
                 </section>
-                <?php 
+                <?php
                 #endregion
-                
+
                 #region Materias
                 ?>
                 <section id="Materias" class="divMaterias">
                     <div class="divMaterias-cabecera">
                         <p class="titulos" >Administración de materias</p>
-                        <a href="vista.php?pan=1&acc=4#Materias" class="btn-ok ancora">Agregar nueva materia</a>
+                        <a href="vista.php?pan=1&acc=4#Matrequirederias" class="btn-ok ancora">Agregar nueva materia</a>
                     </div>
                     <table class="lista">
                     <thead>
@@ -149,7 +160,7 @@
                 </section>
             <?php
                 #endregion
-                
+
                 #region Inscripciones
                 ?>
                 <section id="inscribir" class="divMaterias">
@@ -179,7 +190,7 @@
                 <?php break;
             #endregion
 
-            case 2: // profe 
+            case 2: // profe
 
                 #region Administrar notas
                 ?>
@@ -210,7 +221,7 @@
                 break;
                 #endregion
 
-            case 3: //alumno 
+            case 3: //alumno
             ?>
             <section id="inscribir" class="divMaterias">
                     <div class="divMaterias-cabecera">
@@ -246,7 +257,7 @@
                     switch($_GET['acc']){
 
                         #region modificarUsuario
-                        case 1: ?> 
+                        case 1: ?>
                             <div class="cajaSpot_cierre-modificar altura">
                                 <p class="titulos">Modificar usuario</p> <?php
                                 $id = $_GET['id'];
@@ -254,13 +265,13 @@
                             </div> <?php
                         break;
                         #endregion
-                        
+
                         #region eliminarUsuario
                         case 2: ?>
                             <div class="cajaSpot_cierre-eliminar altura"> <?php
                                 $id = $_GET['id'];
                                 $con = condb();
-                                $info = mysqli_query($con, " select usuarios.id, usuarios.nombre, usuarios.apellido, roles.nombreRol, usuarios.contraseña, usuarios.email, usuarios.dni, estados.nombreEstado from (( usuarios inner join roles on usuarios.rol = roles.id) inner join estados on usuarios.idEstado = estados.id) where usuarios.id = $id;");
+                                $info = mysqli_query($con, " select usuarios.id, usuarios.nombre, usuarios.apellido, roles.nombreRol, usuarios.contrasenia, usuarios.email, usuarios.dni, estados.nombreEstado from (( usuarios inner join roles on usuarios.rol = roles.id) inner join estados on usuarios.idEstado = estados.id) where usuarios.id = $id;");
                                 $data = mysqli_fetch_assoc($info); ?>
                                 <p>Esta a punto de <b class="bold red">ELIMINAR</b> de forma <b class="bold red">PERMANENTE</b> al siguiente usuario.</p>
                                     <div class="cajaSpot_cierre_eliminar-info">
@@ -283,26 +294,26 @@
                                             <input type="checkbox" name="confirmar" id="confirmar" value="2" required>
                                             Deseo eliminar a <b class="bold"><?php echo $data['nombre']?></b> de todas formas.
                                         </label>
-                                        <input type="hidden" name="pan" value="1"> 
+                                        <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="id" value ="<?php echo $data['id'] ?>">
                                         <div>
                                             <button type="submit" class="btn-no">Eliminar Permanentemente</button>
                                             <a href="vista.php#Usuarios" class="btn-ok ancora">Cancelar</a>
                                         </div>
                                     </form>
-                            </div><?php 
-                        break; 
+                            </div><?php
+                        break;
                         #endregion
-                        
+
                         #region crearusuario
                         case 3: ?>
                             <div class="cajaSpot_cierre-crearUsuario altura">
                                 <p class="titulos">Agregar nuevo usuario</p>
                                 <form class="formVista" method="POST" action="vista.php">
                                     <div class="formVista-inputs">
-                                        <label for="nombre">NOMBRE<input type="text" class="inputVista" name="nombre" onkeyup="this.value = this.value();" id="nombre"></label>
-                                        <label for="apellido">APELLIDO<input type="text" class="inputVista" onkeyup="this.value = this.value();" name="apellido" id="apellido"></label>
-                                        <label for="dni">DNI<input type="text" class="inputVista medio" name="dni" id="dni"></label>
+                                        <label for="nombre">NOMBRE<input type="text" class="inputVista" name="nombre" onkeyup="this.value = this.value();" id="nombre" required></label>
+                                        <label for="apellido">APELLIDO<input type="text" class="inputVista" onkeyup="this.value = this.value();" name="apellido" id="apellido" required></label>
+                                        <label for="dni">DNI<input type="text" class="inputVista medio" name="dni" id="dni" required></label>
                                         <label for="rol">ROL
                                             <select class="inputVista" name="rol" id="rol">
                                                     <option value="3">Alumno</option>
@@ -310,8 +321,8 @@
                                                     <option value="1">Administrador</option>
                                             </select>
                                         </label>
-                                        <label for="contraseña">CONTRASEÑA<input type="text" class="inputVista" name="contraseña" id="contraseña"></label>
-                                        <label for="email">EMAIL<input type="text" class="inputVista" onkeyup="this.value = this.value();" name="email" id="email"></label>
+                                        <label for="contrasenia">CONTRASEÑA<input type="text" class="inputVista" name="contrasenia" id="contrasenia" required></label>
+                                        <label for="email">EMAIL<input type="text" class="inputVista" onkeyup="this.value = this.value();" name="email" id="email" required></label>
                                         <label for="estado">ESTADO
                                             <select class="inputVista" name="estado" id="estado">
                                                 <option value="1">Activo</option>
@@ -321,7 +332,7 @@
                                     </div >
                                     <div>
                                         <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="3" required> Agregar usuario</label>
-                                        <input type="hidden" name="pan" value="1"> 
+                                        <input type="hidden" name="pan" value="1">
                                         <button type="submit" class="btn-ok">Agregar</button>
                                         <a href="vista.php#Usuarios" class="btn-no ancora">Cancelar</a>
                                     </div>
@@ -329,9 +340,9 @@
                             </div>
                         <?php break;
                         #endregion
-                        
+
                         #region crearMateria
-                        case 4:  
+                        case 4:
                             $info = Usuario::buscarRol(2);
                             $info2 = Carrera::buscarCarreras();
                         ?>
@@ -342,7 +353,7 @@
                                         <label for="materia">MATERIA<input type="text" class="inputVista" name="materia" onkeyup="this.value = this.value();" id="materia" required></label>
                                         <label for="profesor" required>PROFESOR
                                             <select class="inputVista" name="profesor" id="profesor">
-                                                <?php 
+                                                <?php
                                                     while($data = mysqli_fetch_assoc($info)){ ?>
                                                     <option value="<?php echo $data['id'];?>"><?php echo $data['nombre'] ." " .$data['apellido'] ." DNI: " .$data['dni'];?></option>
                                                     <?php }
@@ -351,7 +362,7 @@
                                         </label>
                                         <label for="carrera" required>CARRERA
                                             <select class="inputVista" name="carrera" id="carrera" required>
-                                                <?php 
+                                                <?php
                                                     while($data2 = mysqli_fetch_assoc($info2)){ ?>
                                                     <option value="<?php echo $data2['id'];?>"><?php echo $data2['nombreCarrera']?></option>
                                                     <?php }
@@ -361,7 +372,7 @@
                                     </div >
                                     <div>
                                         <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="4" required> Agregar nueva materia</label>
-                                        <input type="hidden" name="pan" value="1"> 
+                                        <input type="hidden" name="pan" value="1">
                                         <button type="submit" class="btn-ok">Agregar</button>
                                         <a href="vista.php#Materias" class="btn-no ancora">Cancelar</a>
                                     </div>
@@ -369,7 +380,7 @@
                             </div>
                         <?php break;
                         #endregion
-                        
+
                         #region modificarMateria
                         case 5: // vista modificar materia
                             $idMat = $_GET['id'];
@@ -387,8 +398,8 @@
                                                 <option value="<?php echo $data['profesor'] ?>">
                                                     <?php echo $data['nombre'] ." " .$data['apellido'] ." DNI: " .$data['dni'];?>
                                                 </option>
-                                                <?php 
-                                                    while($opciones = mysqli_fetch_assoc($info)){ 
+                                                <?php
+                                                    while($opciones = mysqli_fetch_assoc($info)){
                                                         if($opciones['id'] != $data['profesor']){?>
                                                     <option value="<?php echo $opciones['id'];?>">
                                                         <?php echo $opciones['nombre'] ." " .$opciones['apellido'] ." DNI: " .$opciones['dni'];?>
@@ -403,13 +414,13 @@
                                                 <option value="<?php echo $data['carrera'] ?>">
                                                     <?php echo $data['nombreCarrera'];?>
                                                 </option>
-                                                <?php 
-                                                    while($data2 = mysqli_fetch_assoc($info2)){ 
+                                                <?php
+                                                    while($data2 = mysqli_fetch_assoc($info2)){
                                                         if($data2['id'] != $data['carrera']){?>
                                                     <option value="<?php echo $data2['id'];?>">
                                                         <?php echo $data2['nombreCarrera']?>
                                                     </option>
-                                                    <?php } 
+                                                    <?php }
                                                     }
                                                 ?>
                                             </select>
@@ -417,7 +428,7 @@
                                     </div >
                                     <div>
                                         <label for="modificar"><input type="checkbox" name="confirmar" id="modificar" value="5" required> Modificar materia</label>
-                                        <input type="hidden" name="pan" value="1"> 
+                                        <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="id" value="<?php echo $data['id'];?>">
                                         <button type="submit" class="btn-ok">Modificar</button>
                                         <a href="vista.php#Materias" class="btn-no ancora">Cancelar</a>
@@ -427,7 +438,7 @@
                         <?php
                         break;
                         #endregion
-                        
+
                         #region eliminarMateria
                         case 6: // vista eliminar materia ?>
                             <div class="cajaSpot_cierre-eliminar altura"> <?php
@@ -451,7 +462,7 @@
                                             <input type="checkbox" name="confirmar" id="confirmar" value="6" required>
                                             Quiero eliminar esta materia
                                         </label>
-                                        <input type="hidden" name="pan" value="1"> 
+                                        <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="id" value ="<?php echo $data['id'] ?>">
                                         <div>
                                             <button type="submit" class="btn-no">Eliminar Permanentemente</button>
@@ -475,16 +486,16 @@
                                     </div >
                                     <div>
                                         <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="7" required> Agregar nueva carrera</label>
-                                        <input type="hidden" name="pan" value="1"> 
+                                        <input type="hidden" name="pan" value="1">
                                         <button type="submit" class="btn-ok">Agregar</button>
                                         <a href="vista.php#Carreras" class="btn-no ancora">Cancelar</a>
                                     </div>
                                 </form>
                             </div>
-                        <?php 
+                        <?php
                         break;
                         #endregion
-                        
+
                         #region modificarCarrera
                         case 8: // vista modificar carrera
                             $info = Carrera::buscarCarrera($_GET['id']);
@@ -501,7 +512,7 @@
                                     <div>
                                         <label for="modificar"><input type="checkbox" name="confirmar" id="modificar" value="8" required> Modificar carrera</label>
                                         <input type="hidden" name="pan" value="1">
-                                        <input type="hidden" name="id" value="<?php echo $data['id']?>"> 
+                                        <input type="hidden" name="id" value="<?php echo $data['id']?>">
                                         <button type="submit" class="btn-ok">Agregar</button>
                                         <a href="vista.php#Carreras" class="btn-no ancora">Cancelar</a>
                                     </div>
@@ -510,9 +521,9 @@
                             <?php
                         break;
                         #endregion
-                        
+
                         #region eliminarCarreara
-                        case 9: //vista eliminar carrera ?> 
+                        case 9: //vista eliminar carrera ?>
                             <div class="cajaSpot_cierre-eliminar altura"> <?php
                                 $id = $_GET['id'];
                                 $con = condb();
@@ -534,18 +545,19 @@
                                             <input type="checkbox" name="confirmar" id="confirmar" value="9" required>
                                             Ya elimine las materias y ahora quiero eliminar la carrera.
                                         </label>
-                                        <input type="hidden" name="pan" value="1"> 
+                                        <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="id" value ="<?php echo $data['id'] ?>">
                                         <div>
                                             <button type="submit" class="btn-no">Eliminar Permanentemente</button>
                                             <a href="vista.php#Carreras" class="btn-ok ancora">Cancelar</a>
                                         </div>
                                     </form>
-                            </div><?php 
+                            </div><?php
                         break;
                         #endregion
-                    
+
                         #region inscribirAlumno
+                        // VER COMO CONCATENAR BUSCARROL(3) CON BUSCARESTADO(1) PARA QUE SOLAMENTE ME DEJE INSCRIBIR ALUMNOS ACTIVOS (IDEM PARA PROFES)
                         case 10:
                             $info = Usuario::buscarRol(3);
                             $info2 = Carrera::buscarCarreras();
@@ -556,7 +568,7 @@
                                     <div class="formVista-inputs">
                                         <label for="alumno" required>ALUMNO
                                             <select class="inputVista" name="alumno" id="alumno">
-                                                <?php 
+                                                <?php
                                                     while($data = mysqli_fetch_assoc($info)){ ?>
                                                     <option value="<?php echo $data['id'];?>"><?php echo $data['nombre'] ." " .$data['apellido'] ." DNI: " .$data['dni'];?></option>
                                                     <?php }
@@ -565,7 +577,7 @@
                                         </label>
                                         <label for="carrera" required>CARRERA
                                             <select class="inputVista" name="carrera" id="carrera" required>
-                                                <?php 
+                                                <?php
                                                     while($data2 = mysqli_fetch_assoc($info2)){ ?>
                                                     <option value="<?php echo $data2['id'];?>"><?php echo $data2['nombreCarrera']?></option>
                                                     <?php }
@@ -575,29 +587,33 @@
                                     </div >
                                     <div>
                                         <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="10" required>Inscribir alumno</label>
-                                        <input type="hidden" name="pan" value="1"> 
+                                        <input type="hidden" name="pan" value="1">
                                         <button type="submit" class="btn-ok">Agregar</button>
                                         <a href="vista.php#inscribir" class="btn-no ancora">Cancelar</a>
                                     </div>
                                 </form>
                             </div>
-                        <?php 
+                        <?php
                         break;
                         #endregion
 
-                        #region eliminarInscripcion REVISAR
+                        #region eliminarInscripcion
+                            // REVISAR PARA QUE SE ELEMINE LA MATERIA Y NO TODA LA CARRERA
                         case 11: ?>
                         <div class="cajaSpot_cierre-eliminar altura"> <?php
                                 $idU = $_GET['idU'];
-                                $nombre = $_GET['alumno']; 
-                                $carrera = $_GET['carrera'];?>
+                                $nombre = $_GET['alumno'];
+                                $carrera = $_GET['carrera'];
+                                // $materia = $_GET['materia'];?>
                                 <p>Esta a punto de <b class="bold red">ELIMINAR</b> de forma <b class="bold red">PERMANENTE</b> la siguiente carrera asignada</p>
                                     <div class="cajaSpot_cierre_eliminar-info">
                                         <div class="cajaSpot_cierre_eliminar_info-usuario">
                                             <p>ALUMNO: <b class="bold"><?php echo $_GET['alumno'];?></b></p>
                                             <p>CARREA: <b class="bold"><?php echo $_GET['carrera'];?></b></p>
+                                            <!-- <p>Materia: <b class="bold"><?php // echo $_GET['materia'];?></b></p> -->
                                         </div>
                                         <div class="cajaSpot_cierre_eliminar_info-mensaje">
+                                        <!-- permanentemente esta materia dado que no cumplio con las notas para aprobar la cursada -->
                                             <p>Si <b class="bold red">ELIMINA</b> permanentemente esta asignatura se perderan las notas asignadas a las materias correspondientes entre el alumno y la carrera</p>
                                         </div>
                                     </div>
@@ -606,19 +622,22 @@
                                             <input type="checkbox" name="confirmar" id="confirmar" value="11" required>
                                             Eliminar de todas formas
                                         </label>
-                                        <input type="hidden" name="pan" value="1"> 
+                                        <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="id" value ="<?php echo $_GET['idU'] ?>">
                                         <div>
                                             <button type="submit" class="btn-no">Eliminar asignatura</button>
                                             <a href="vista.php#inscribir" class="btn-ok ancora">Cancelar</a>
                                         </div>
                                     </form>
-                            </div><?php 
+                            </div><?php
                         break;
                         #endregion
 
                         #region modificarNota
-                        case 12: 
+                            // MODIFICAR NOTA PARA QUE LAS NOTAS SE APRUEBEN CON 4-10 PARA QUE PUEDA APROBAR LA OTRA INSTANCIA
+                            // agregar validacion para que pueda poner solamente un numero del 1 al 10 (puede ser float)
+                            // PROBAR CREO QUE ESTA
+                        case 12:
                         ?>
                         <div class="cajaSpot_cierre-eliminar altura"> <?php
                                 $idU = $_GET['alumno'];
@@ -634,21 +653,22 @@
                                         <form class="cajaSpot_cierre_eliminar_info-opciones" method="POST" action="vista.php">
                                             <p>MATERIA <b class="bold"><?php echo $mat; ?></b></p>
                                             <label for="parcial1">PARCIAL 1
-                                                <input type="number" maxlength="2" class="inputVista medio" name="parcial1" id="parcial1" value="<?php echo $data['notaParcial1']; ?>">
+                                                <input type="number" maxlength="2" class="inputVista medio" name="parcial1" id="parcial1" value="<?php echo $data['notaParcial1']; ?>" min="1" max="10" required>
                                             </label>
-                                            <?php if($data['notaParcial1'] >= 0 && $data['notaParcial1'] != null){?>
+                                            <?php if($data['notaParcial1'] != null){?>
+
                                             <label for="parcial2">PARCIAL 2
-                                                <input type="number" class="inputVista medio" name="parcial2" id="parcial2" value="<?php echo $data['notaParcial2']; ?>">
+                                                <input type="number" class="inputVista medio" name="parcial2" id="parcial2" value="<?php echo $data['notaParcial2']; ?>" min="1" max="10" required>
                                             </label>
-                                            <?php } else { ?> 
+                                            <?php } else { ?>
                                                 <input type="hidden" name="parcial2" value="null">
                                             <?php }
-                                            if($data['notaParcial2'] >= 0 && $data['notaParcial2'] != null){?>
+                                            if(($data['notaParcial2'] >= 4 && $data['notaParcial2'] <= 10)&& $data['notaParcial2'] != null && ($data['notaParcial1'] >= 4 && $data['notaParcial1'] <= 10) && $data['notaParcial1'] != null){?>
                                             <label for="final">FINAL
-                                                <input type="number" class="inputVista medio" name="final" id="final" value="<?php echo $data['notaFinal']; ?>">
+                                                <input type="number" class="inputVista medio" name="final" id="final" value="<?php echo $data['notaFinal']; ?>" min="1" max="10" required>
                                             </label>
-                                            <?php } else { ?> 
-                                                <input type="hidden" name="final" value="null"> 
+                                            <?php } else { ?>
+                                                <input type="hidden" name="final" value="null">
                                             <?php } ?>
                                         </div>
                                         <div class="cajaSpot_cierre_eliminar_info-mensaje">
@@ -659,7 +679,7 @@
                                             <input type="checkbox" name="confirmar" id="confirmar" value="12" required>
                                             Modificar notas.
                                         </label>
-                                        <input type="hidden" name="pan" value="1"> 
+                                        <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="alumno" value ="<?php echo $idU ?>">
                                         <input type="hidden" name="materia" value ="<?php echo $idM ?>">
                                         <div>
@@ -667,7 +687,7 @@
                                             <a href="vista.php#inscribir" class="btn-no ancora">Cancelar</a>
                                         </div>
                                     </form>
-                            </div><?php 
+                            </div><?php
                         break;
                         #endregion
 
@@ -679,7 +699,7 @@
                         switch($_POST['confirmar']){
 
                             case 1: // modificar usuario
-                                $mods = new Usuario($_POST['id'],$_POST['nombre'],$_POST['apellido'],$_POST['rol'],$_POST['contraseña'],$_POST['email'],$_POST['dni'],$_POST['estado'],);
+                                $mods = new Usuario($_POST['id'],$_POST['nombre'],$_POST['apellido'],$_POST['rol'],$_POST['contrasenia'],$_POST['email'],$_POST['dni'],$_POST['estado'],);
                                 $texto = $mods->modificarUsuario();
                                 echo $texto;
                                 echo " <a href='vista.php' class='btn-ok ancora'>Cerrar</a>";
@@ -696,7 +716,7 @@
                                 }
                             break;
                             case 3: // agregar usuario
-                                $nuevoUsuario = new Usuario(null,$_POST['nombre'],$_POST['apellido'],$_POST['rol'],$_POST['contraseña'],$_POST['email'],$_POST['dni'],$_POST['estado']);
+                                $nuevoUsuario = new Usuario(null,$_POST['nombre'],$_POST['apellido'],$_POST['rol'],$_POST['contrasenia'],$_POST['email'],$_POST['dni'],$_POST['estado']);
                                 $dni = $_POST['dni'];
                                 $email = $_POST['email'];
                                 $con = condb();
@@ -760,15 +780,15 @@
                                 <a href='vista.php' class='btn-ok ancora'>Cerrar</a>
                                 <?php
                             break;
-                            case 11: // desasignar carrera
+                            case 11: // desasignar carrera VER PARA QUE SOLAMENTE SE LE DESASIGNE LA MATERIA probar con $texto = Notas::eliminarNota($_POST['id']);
                                 $nota = new Notas($_POST['id'],null);
                                 $texto = $nota->eliminarNotas();
                                 echo $texto; ?>
                                 <a href='vista.php' class='btn-ok ancora'>Cerrar</a>
                                 <?php
                             break;
-                            case 12: // modificar nota
-                                
+                            case 12: // modificar nota VER BIEN PARA QUE SE APRUEBE CON 4-10 SOLAMENTE
+
                                 $modificacion = new Notas($_POST['alumno'],$_POST['materia']);
                                 $modificacion->setNotas($_POST['parcial1'],$_POST['parcial2'],$_POST['final']);
                                 $texto = $modificacion->modificarNotas();
@@ -783,12 +803,12 @@
     </main>
     <footer>
         <font-size="5"><h4><p class="titulos blanco" ><font-size="5">Pasaje Crámer 471 – Bernal – Buenos Aires.</p><br>
-        <p class="titulos blanco">Contactanos Tel: 4444-1234, Email: instituofalso@gmail.com</p></h4></font-size>
+        <p class="titulos blanco">Contactanos Tel: 4444-1234, Email: institofalso@gmail.com</p></h4></font-size>
     </footer>
 </body>
 
 </html>
 
-<?php 
+<?php
 
 ?>

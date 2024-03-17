@@ -30,7 +30,6 @@
         </div>
     </header>
     <main class="imagen">
-        <!-- <img src="caratula_inst1.jpg"> -->
         <div class="contenedorLogin">
             <form class="contenedorLogin-form" method="POST">
                 <label class="contenedorLogin_form-label" for="dni">
@@ -39,7 +38,7 @@
                 </label>
                 <label class="contenedorLogin_form-label" for="contra">
                     Ingrese su contraseña
-                    <input class="contenedorLogin_form_label-input" type="password" name="contraseña" id="contra" placeholder="***********" required>
+                    <input class="contenedorLogin_form_label-input" type="password" name="contrasenia" id="contra" placeholder="***********" required>
                 </label>
                 <div class="contenedorLogin_form-cajaBtn">
                     <button class="btn-ok" type="submit">Acceder</button>
@@ -49,8 +48,7 @@
                 <p class="contenedorLogin_cajaMensaje-Texto">
                     <?php 
                         if( isset($_POST['dni']) )
-                            Usuario::VerificarUsuario($_POST['dni'],$_POST['contraseña'])
-                        
+                            Usuario::VerificarUsuario($_POST['dni'],$_POST['contrasenia'])
                     ?>
                 </p>
             </div>
@@ -58,7 +56,7 @@
     </main>
     <footer>
         <font-size="5"><h4><p class="titulos blanco" ><font-size="5">Pasaje Crámer 471 – Bernal – Buenos Aires.</p><br>
-        <p class="titulos blanco">Contactanos Tel: 4444-1234, Email: instituofalso@gmail.com</p></h4></font-size>
+        <p class="titulos blanco">Contactanos Tel: 4444-1234, Email: institofalso@gmail.com</p></h4></font-size>
     </footer>
 </body>
 

@@ -31,7 +31,7 @@ create table usuarios(
     nombre varchar(30),
     apellido varchar(30),
     rol int,
-    contraseña varchar(30),
+    contrasenia varchar(30),
     email varchar(30) UNIQUE,
     dni int(8) UNIQUE,
     foreign key (rol) references roles(id),
@@ -63,9 +63,9 @@ create table notas(
 alter table usuarios add idEstado int;
 alter table usuarios add foreign key (idEstado) references estados(id);
 
-insert into usuarios (nombre,apellido,rol,contraseña,email,dni,idEstado) values 
+insert into usuarios (nombre,apellido,rol,contrasenia,email,dni,idEstado) values 
 ('Administrador','God',1,'admin123','agod@gmail.com',9999,1),
-('Paula','Giamo',2,'pgiamo','pgiamo@gmail.com',28102975,1),
+('Paula','Giaimo',2,'pgiaimo','pgiaimo@gmail.com',28102975,1),
 ('Graciana','Roldan',2,'groldan','groldan@gmail.com',33456700,1),
 ('Juan','Pellegrini',2,'jpellegrini','jpellegrini@gmail.com',21031795,1),
 ('Diego','Pacini',2,'dpacini','dpacini@gmail.com',30445687,1),

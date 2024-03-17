@@ -118,6 +118,17 @@
         #endregion
 
         #region eliminarNotas
+        // VER SI FUNCIONA QUE ELEMINE SOLO LA ASIGNATURA DESEADA
+        // public static function eliminarNotas($id){
+        //     $con = condb();
+        //     $text = "";
+
+        //     mysqli_query($con, "delete from notas where id = $id;");
+
+        //     (mysqli_affected_rows($con) >0) ? $text = "Cursada eliminada correctamente." : $text = "No se pudo eliminar la asignatura correctamente.";
+
+        //     return $text;
+        // }
         public function eliminarNotas(){
             $con = condb();
             $text = "";
