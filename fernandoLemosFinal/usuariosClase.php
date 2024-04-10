@@ -257,7 +257,7 @@
                     </label>
                 </div >
                 <div>
-                    <label for="confirmar_cambios"><input type="checkbox" name="confirmar" id="confirmar_cambios" value="1" required> Confirmar cambios</label>
+                    <label for="confirmar_cambios"><input type="checkbox" name="confirmar" id="confirmar_cambios" value="1" required> Confirmar</label>
                     <input type="hidden" name="pan" value="1"> 
                     <button type="submit" class="btn-ok">Modificar</button>
                     <a href="vista.php#Usuarios" class="btn-no ancora">Cancelar</a>

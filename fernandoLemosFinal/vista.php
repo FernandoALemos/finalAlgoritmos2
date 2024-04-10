@@ -11,9 +11,8 @@
     }
 
     $idSESION = $_SESSION['id'];
-    // Inicio de sesión, triple consulta innecesaria en VerificarUsuario()!
 
-    // Admin: No deberia mostrarme las contraseñas de los usuarios!! Si quiero cambiarla puedo usar input type password. (HECHO) CHECK
+    // Admin: No deberia mostrarme las contraseñas de los usuarios!! Si quiero cambiarla puedo usar input type password. (HECHO) CHECK usuariosClase linea 176
     // Los campos para altas deberian ser obligatorios (al menos los necesarios) (HECHO) CHECK
     // campo email deberia validar y no dejar ingresar cualquier cosa. (Verifica que no se duplique un mail) (HECHO)
     // Si intento eliminar alumno asignado me da error fatal (YA POSEE UN MENSAJE PARA ELIMINAR UN ALUMNO O SUSPENDERLO, IDEM PARA PROFESOR)
@@ -292,7 +291,7 @@
                                     <form class="cajaSpot_cierre_eliminar_info-opciones" method="POST" action="vista.php">
                                         <label for="confirmar">
                                             <input type="checkbox" name="confirmar" id="confirmar" value="2" required>
-                                            Deseo eliminar a <b class="bold"><?php echo $data['nombre']?></b> de todas formas.
+                                            Confirmar
                                         </label>
                                         <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="id" value ="<?php echo $data['id'] ?>">
@@ -331,7 +330,7 @@
                                         </label>
                                     </div >
                                     <div>
-                                        <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="3" required> Agregar usuario</label>
+                                        <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="3" required> Confirmar </label>
                                         <input type="hidden" name="pan" value="1">
                                         <button type="submit" class="btn-ok">Agregar</button>
                                         <a href="vista.php#Usuarios" class="btn-no ancora">Cancelar</a>
@@ -371,7 +370,7 @@
                                         </label>
                                     </div >
                                     <div>
-                                        <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="4" required> Agregar nueva materia</label>
+                                        <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="4" required> Confirmar</label>
                                         <input type="hidden" name="pan" value="1">
                                         <button type="submit" class="btn-ok">Agregar</button>
                                         <a href="vista.php#Materias" class="btn-no ancora">Cancelar</a>
@@ -427,7 +426,7 @@
                                         </label>
                                     </div >
                                     <div>
-                                        <label for="modificar"><input type="checkbox" name="confirmar" id="modificar" value="5" required> Modificar materia</label>
+                                        <label for="modificar"><input type="checkbox" name="confirmar" id="modificar" value="5" required> Confirmar</label>
                                         <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="id" value="<?php echo $data['id'];?>">
                                         <button type="submit" class="btn-ok">Modificar</button>
@@ -460,7 +459,7 @@
                                     <form class="cajaSpot_cierre_eliminar_info-opciones" method="POST" action="vista.php">
                                         <label for="confirmar">
                                             <input type="checkbox" name="confirmar" id="confirmar" value="6" required>
-                                            Quiero eliminar esta materia
+                                            Confirmar
                                         </label>
                                         <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="id" value ="<?php echo $data['id'] ?>">
@@ -485,7 +484,7 @@
                                         <label for="turno">TURNO<input type="text" class="inputVista" name="turno" onkeyup="this.value = this.value();" id="turno" placeholder="Mañana ,Tarde ,Vespertino" required></label>
                                     </div >
                                     <div>
-                                        <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="7" required> Agregar nueva carrera</label>
+                                        <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="7" required> Confirmar</label>
                                         <input type="hidden" name="pan" value="1">
                                         <button type="submit" class="btn-ok">Agregar</button>
                                         <a href="vista.php#Carreras" class="btn-no ancora">Cancelar</a>
@@ -510,7 +509,7 @@
                                         <label for="turno">TURNO<input type="text" class="inputVista" name="turno" onkeyup="this.value = this.value();" id="turno" value="<?php echo $data['turno'] ?>"></label>
                                     </div >
                                     <div>
-                                        <label for="modificar"><input type="checkbox" name="confirmar" id="modificar" value="8" required> Modificar carrera</label>
+                                        <label for="modificar"><input type="checkbox" name="confirmar" id="modificar" value="8" required> Confirmar</label>
                                         <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="id" value="<?php echo $data['id']?>">
                                         <button type="submit" class="btn-ok">Agregar</button>
@@ -543,7 +542,7 @@
                                     <form class="cajaSpot_cierre_eliminar_info-opciones" method="POST" action="vista.php">
                                         <label for="confirmar">
                                             <input type="checkbox" name="confirmar" id="confirmar" value="9" required>
-                                            Ya elimine las materias y ahora quiero eliminar la carrera.
+                                            Confirmar
                                         </label>
                                         <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="id" value ="<?php echo $data['id'] ?>">
@@ -586,7 +585,7 @@
                                         </label>
                                     </div >
                                     <div>
-                                        <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="10" required>Inscribir alumno</label>
+                                        <label for="agregar"><input type="checkbox" name="confirmar" id="agregar" value="10" required> Confirmar</label>
                                         <input type="hidden" name="pan" value="1">
                                         <button type="submit" class="btn-ok">Agregar</button>
                                         <a href="vista.php#inscribir" class="btn-no ancora">Cancelar</a>
@@ -620,7 +619,7 @@
                                     <form class="cajaSpot_cierre_eliminar_info-opciones" method="POST" action="vista.php">
                                         <label for="confirmar">
                                             <input type="checkbox" name="confirmar" id="confirmar" value="11" required>
-                                            Eliminar de todas formas
+                                            Confirmar
                                         </label>
                                         <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="id" value ="<?php echo $_GET['idU'] ?>">
@@ -677,7 +676,7 @@
                                     </div>
                                         <label for="confirmar">
                                             <input type="checkbox" name="confirmar" id="confirmar" value="12" required>
-                                            Modificar notas.
+                                            Confirmar
                                         </label>
                                         <input type="hidden" name="pan" value="1">
                                         <input type="hidden" name="alumno" value ="<?php echo $idU ?>">
